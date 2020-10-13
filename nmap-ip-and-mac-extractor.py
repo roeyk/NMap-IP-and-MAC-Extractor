@@ -15,13 +15,17 @@ import re
 
 def parse_IP_and_MAC(lines):
 
-    state=0 # first one
+    # initialize state and collection variables
+    state=0 
     IP_Address = ''
     MAC_Address = ''
     up = False
     state = 0
 
+    # loop through all given lines of input
     for line in lines:
+        
+      # we're at the first line of a host's result, containing an IP
       if state==0:  
         if line.startswith("Nmap scan report for"):
             IP = line.split("Nmap scan report for")[1]
@@ -29,13 +33,14 @@ def parse_IP_and_MAC(lines):
             state = 1
             continue
 
-
+      # we're at the second line of a host's result, indicating its state
       elif state==1:
         if line.startswith('Host is up'):
           up = True
           state = 2
           continue
 
+      # we're at the third line of a host's result, containing its MAC address
       elif state==2:
         if line.startswith('MAC Address'):        
           MAC_line = line.split('MAC Address:')[1]
@@ -51,6 +56,8 @@ def parse_IP_and_MAC(lines):
           state = 0 # reset state back to 0
           continue
 
+      
+# main sequence      
 if __name__=="__main__":
     if len(sys.argv)==0:
         print("Usage: parse-nmap-IPs-and-MACS.py file1.nmap file2.nmap ... fileN.nmap")
